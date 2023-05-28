@@ -46,6 +46,17 @@ utils.is_client_on_direction = function(dir, c, stacked)
     end
 end
 
+utils.spawn_in_tagidx_and_view = function(command, tagIdx, screen)
+    local screen = screen or awful.screen.focused()
+    local t = screen.tags[tagIdx]
+    awful.spawn.easy_async(command,
+        function()
+            t:view_only()
+        end, {
+        tag = t
+    })
+end
+
 utils.trim = function (s)
     return (s:gsub("^%s*(.-)%s*$", "%1"))
 end

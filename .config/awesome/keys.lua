@@ -87,10 +87,10 @@ keys.globalkeys = gears.table.join(
         function () awful.client.focus.byidx(-1) end,
         { description = "focus previous by index", group = "client" }
     ),
-    wm("w",
-        function () mymainmenu:show() end,
-        { description = "show main menu", group = "awesome" }
-    ),
+    -- wm("w",
+    --     function () mymainmenu:show() end,
+    --     { description = "show main menu", group = "awesome" }
+    -- ),
 
     -- Layout manipulation
     wms("j",
@@ -127,6 +127,13 @@ keys.globalkeys = gears.table.join(
         function () awful.spawn(terminal) end,
         { description = "open a terminal", group = "launcher" }
     ),
+    wm("w",
+        function ()
+            utils.spawn_in_tagidx_and_view("firefox", 2)
+        end,
+        { description = "open firefox", group = "launcher" }
+    ),
+
     wms("r",
         awesome.restart,
         { dscription = "reload awesome", group = "awesome" }
@@ -197,15 +204,39 @@ keys.globalkeys = gears.table.join(
         { description = "lua execute prompt", group = "awesome" }
     ),
     -- Menus
-    wm("p",
-        function() menubar.show() end,
-        { description = "show the menubar", group = "launcher" }
-    ),
+    -- This is cool... well awful actually ;3 I'd use rofi instead.
+    -- wm("p",
+    --     function() menubar.show() end,
+    --     { description = "show the menubar", group = "launcher" }
+    -- ),
     wms("e",
         powermenu,
         -- function() awful.spawn.with_shell(CONFIG_DIR .. "scripts/powermenu") end,
         { description = "open power menu", group = "launcher" }
+    ),
+
+    -- Screenshots
+    awful.key({ }, "Print",
+        function()
+            awful.spawn.with_shell("scrot --silent -e 'xclip -selection clipboard -t image/png -i $f' && notify-send \"Scweenshwot sawed to clipbwoard! UwU\"")
+        end,
+        { description = "Take full screen screenshot", group = "Screenshots" }
+    ),
+    wms("s",
+        function()
+            awful.spawn.with_shell("scrot --silent -s -f -e 'xclip -selection clipboard -t image/png -i $f' && notify-send \"Scweenshwot sawed to clipbwoard! UwU\"")
+        end,
+        { description = "Screenshot of selected part of screen", group = "Screenshots" }
+    ),
+
+    -- audio
+    wm("p",
+        function ()
+            awful.spawn.with_shell(CONFIG_DIR .. "scripts/audio-device-switch.sh")
+        end,
+        { description = "Switch audio device", group = "audio" }
     )
+    
 )
 
 keys.clientkeys = gears.table.join(

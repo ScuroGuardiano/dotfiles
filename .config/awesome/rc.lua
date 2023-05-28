@@ -21,6 +21,8 @@ hotkeys_popup = require("awful.hotkeys_popup")
 -- when client with a matching name is opened:
 require("awful.hotkeys_popup.keys")
 
+local volume_widget = require("widgets.volume")
+
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
 -- another config (This code will only ever execute for the fallback config)
@@ -205,6 +207,8 @@ awful.screen.connect_for_each_screen(function(s)
     -- Create the wibox
     s.mywibox = awful.wibar({ position = "top", screen = s })
 
+    s.volume = volume_widget(s)
+
     -- Add widgets to the wibox
     s.mywibox:setup {
         layout = wibox.layout.align.horizontal,
@@ -219,6 +223,7 @@ awful.screen.connect_for_each_screen(function(s)
             layout = wibox.layout.fixed.horizontal,
             mykeyboardlayout,
             wibox.widget.systray(),
+            s.volume,
             mytextclock,
             s.mylayoutbox,
         },
@@ -249,6 +254,18 @@ awful.rules.rules = {
                      screen = awful.screen.preferred,
                      placement = awful.placement.no_overlap+awful.placement.no_offscreen
      }
+    },
+
+    {   -- Pavu-chan needs some special treatment UwU
+        rule_any = {
+            class = { "Pavucontrol" },
+        },
+        properties = {
+            floating = true,
+            width = 1000,
+            height = 800,
+            placement = awful.placement.centered
+        }
     },
 
     -- Floating clients.

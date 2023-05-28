@@ -67,8 +67,8 @@ local function execute_action_on_menuitem(menuitem)
 
     if should_confirm then
         awful.spawn.easy_async_with_shell(string.format(confirmation_cmd_fmt, caption .. "?"),
-            function(stdout, stderr, reason, exit_code)
-                if (string.find(stdout, "Yes")) then
+            function(out)
+                if (string.find(out, "Yes")) then
                     awful.spawn.with_shell(command);
                 end
             end
@@ -81,12 +81,12 @@ end
 
 local function show_powermenu()
     awful.spawn.easy_async_with_shell(final_cmd,
-            function(stdout, stderr, reason, exit_code)
-            local menuitem = find_menu_item_by_key(stdout)
-            if menuitem ~= nil then
-                execute_action_on_menuitem(menuitem)
+            function(out)
+                local menuitem = find_menu_item_by_key(out)
+                if menuitem ~= nil then
+                    execute_action_on_menuitem(menuitem)
+                end
             end
-        end
     )
 end
 
