@@ -49,13 +49,12 @@ end
 utils.spawn_in_tagidx_and_view = function(command, tagIdx, screen)
     local screen = screen or awful.screen.focused()
     local t = screen.tags[tagIdx]
-    awful.spawn.easy_async(command,
-        function()
-            t:view_only()
-        end, {
-        tag = t
-    })
+    awful.spawn(command,
+        { tag = t}
+    )
+    t:view_only()
 end
+
 
 utils.trim = function (s)
     return (s:gsub("^%s*(.-)%s*$", "%1"))

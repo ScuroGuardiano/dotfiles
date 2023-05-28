@@ -133,6 +133,18 @@ keys.globalkeys = gears.table.join(
         end,
         { description = "open firefox", group = "launcher" }
     ),
+    wms("g",
+        function()
+            utils.spawn_in_tagidx_and_view("steam", 3)
+        end,
+        { description = "open steam, G like GAMING", group = "launcher" }
+    ),
+    wms("p",
+        function()
+            utils.spawn_in_tagidx_and_view("steam steam://rungameid/238960", 3)
+        end,
+        { description = "I NEED TO PLAY POE RIGHT NOW", group = "launcher" }
+    ),
 
     wms("r",
         awesome.restart,
@@ -214,6 +226,18 @@ keys.globalkeys = gears.table.join(
         -- function() awful.spawn.with_shell(CONFIG_DIR .. "scripts/powermenu") end,
         { description = "open power menu", group = "launcher" }
     ),
+    wm("d",
+        function()
+            awful.spawn("rofi -modi drun -show drun -config " .. HOME .. "/.config/rofi/rofidmenu.rasi")
+        end,
+        { description = "open dmenu", group = "launcher" }
+    ),
+    wm("t",
+        function()
+            awful.spawn("rofi -show window -config " .. HOME .. "/.config/rofi/rofidmenu.rasi")
+        end,
+        { description = "open dmenu", group = "launcher" }
+    ),
 
     -- Screenshots
     awful.key({ }, "Print",
@@ -235,11 +259,59 @@ keys.globalkeys = gears.table.join(
             awful.spawn.with_shell(CONFIG_DIR .. "scripts/audio-device-switch.sh")
         end,
         { description = "Switch audio device", group = "audio" }
+    ),
+    awful.key({ }, "XF86AudioRaiseVolume",
+        function()
+            awful.spawn.with_shell("exec amixer -D pulse sset Master 2%+")
+        end,
+        { description = "Increase volume by 2%", group = "audio" }
+    ),
+    awful.key({ }, "XF86AudioLowerVolume",
+        function()
+            awful.spawn.with_shell("exec amixer -D pulse sset Master 2%-")
+        end,
+        { description = "Decrease volume by 2%", group = "audio" }
+    ),
+    awful.key({ }, "XF86AudioMute",
+        function()
+            awful.spawn.with_shell("exec amixer sset Master toggle")
+        end,
+        { description = "Toggle mute", group = "audio" }
+    ),
+    -- My keyboard have only play
+    awful.key({ }, "XF86AudioPlay",
+        function()
+            awful.spawn.with_shell("playerctl play-pause")
+        end,
+        { description = "Play", group = "audio" }
+    ),
+    -- awful.key({ }, "XF86AudioPause",
+    --     function()
+    --         awful.spawn.with_shell("playerctl pause")
+    --     end,
+    --     { description = "Pause", group = "audio" }
+    -- ),
+    awful.key({ }, "XF86AudioNext",
+        function()
+            awful.spawn.with_shell("playerctl next")
+        end,
+        { description = "Next", group = "audio" }
+    ),
+    awful.key({ }, "XF86AudioPrev",
+        function()
+            awful.spawn.with_shell("playerctl previous")
+        end,
+        { description = "Previous", group = "audio" }
     )
     
 )
 
 keys.clientkeys = gears.table.join(
+    wm("v",
+        function (c)
+            libsg.titlebar.toggle(c, { position = "top", resize = true })
+        end
+    ),
     wm("f",
         function (c)
             c.fullscreen = not c.fullscreen

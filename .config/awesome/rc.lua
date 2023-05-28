@@ -21,6 +21,9 @@ hotkeys_popup = require("awful.hotkeys_popup")
 -- when client with a matching name is opened:
 require("awful.hotkeys_popup.keys")
 
+-- My library
+libsg = require("libsg_awesome")
+
 local volume_widget = require("widgets.volume")
 
 -- {{{ Error handling
@@ -176,7 +179,7 @@ awful.screen.connect_for_each_screen(function(s)
     -- Each screen has its own tag table.
     local names = { "Hacking", "Pr0n", "Gaming", "DC & Spotify", "5", "6", "Pocztex", "8", "9" }
     local l = awful.layout.suit  -- Just to save some typing: use an alias.
-    local layouts = { l.tile, l.tile, l.max, l.tile, l.floating,
+    local layouts = { l.tile, l.tile, l.floating, l.tile, l.floating,
         l.floating, l.max, l.floating, l.floating }
     awful.tag(names, s, layouts)
 
@@ -285,7 +288,9 @@ awful.rules.rules = {
           "Tor Browser", -- Needs a fixed window size to avoid fingerprinting by screen size.
           "Wpa_gui",
           "veromix",
-          "xtightvncviewer"},
+          "xtightvncviewer",
+          "leagueclientux.exe"
+        },
 
         -- Note that the name property shown in xprop might be set slightly after creation of the client
         -- and the name shown there might not match defined rules here.
@@ -304,6 +309,41 @@ awful.rules.rules = {
       }, properties = { titlebars_enabled = true }
     },
 
+    {
+        rule_any = {
+            class = {
+                "Xfce4-terminal", "UXTerm"
+            },
+        },
+        properties = {
+            size_hints_honor = false
+        }
+    }
+
+    -- {   -- Steam is special needs kid aswell
+    --     rule_any = {
+    --         class = { "Steam", "awakened-poe-trade",  },
+    --     },
+    --     properties = {
+    --         titlebars_enabled = false,
+    --         border_width = 0,
+    --         border_color = 0,
+    --         size_hints_honor = false,
+    --         floating = true
+    --     }
+    -- },
+
+    -- {
+    --     rule_any = {
+    --         class = { "league of legends.exe", "steam_app_238960" },
+    --     },
+    --     properties = {
+    --         titlebars_enabled = false,
+    --         border_width = 0,
+    --         border_color = 0
+    --     }
+    -- }
+
     -- Set Firefox to always map on the tag named "2" on screen 1.
     -- { rule = { class = "Firefox" },
     --   properties = { screen = 1, tag = "2" } },
@@ -317,6 +357,17 @@ client.connect_signal("manage", function (c)
     -- i.e. put it at the end of others instead of setting it master.
     -- if not awesome.startup then awful.client.setslave(c) end
 
+    if c.class == "awakened-poe-trade" then
+        -- local poe = function (c)
+        --     return awful.rules.match(c, {class = "steam_app_238960"})
+        -- end
+
+        -- for c in awful.client.iterate(poe) do
+        --   client.focus = c
+        -- end
+        client.focus = c
+    end
+
     if awesome.startup
       and not c.size_hints.user_position
       and not c.size_hints.program_position then
@@ -327,6 +378,10 @@ end)
 
 -- Add a titlebar if titlebars_enabled is set to true in the rules.
 client.connect_signal("request::titlebars", function(c)
+    if c.requests_no_titlebar then
+        return
+    end
+
     -- buttons for the titlebar
     local buttons = gears.table.join(
         awful.button({ }, 1, function()
@@ -365,13 +420,38 @@ client.connect_signal("request::titlebars", function(c)
     }
 end)
 
--- Enable sloppy focus, so that focus follows mouse.
+--Enable sloppy focus, so that focus follows mouse.
 client.connect_signal("mouse::enter", function(c)
+    if c.class == "awakened-poe-trade" then
+        return
+    end
+
     c:emit_signal("request::activate", "mouse_enter", {raise = false})
 end)
 
+
 client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
 client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
+client.connect_signal("property::fullscreen", function(c)
+    if c.fullscreen then
+        libsg.titlebar.hide(c, { resize = true })
+        gears.timer.delayed_call(function()
+            if c.valid then
+              c:geometry(c.screen.geometry)
+            end
+        end)
+    elseif not c.requests_no_titlebar then
+        libsg.titlebar.show(c, { resize = true })
+    end
+  end)
+
+client.connect_signal("property::request_no_titlebar", function(c)
+    if c.request_no_titlebar then
+        awful.titlebar.hide(c)
+    else
+        awful.titlebar.show(c)
+    end
+end)
 -- }}}
 
 require("autorun")
