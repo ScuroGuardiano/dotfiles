@@ -1,10 +1,12 @@
 local keys = {}
-local mod = "Mod4"
+local mod = modkey
 local shift = "Shift"
 local ctrl = "Control"
 
 local utils = require("utils")
 local powermenu = require("menus.powermenu")
+local volume_widget = require("widgets.volume")
+local mainmenu = require("widgets.mainmenu")
 
 local tags = 9
 
@@ -32,7 +34,7 @@ end
 
 keys.tags = tags
 keys.buttons = gears.table.join(
-    awful.button({  }, 3, function() mymainmenu:toggle() end),
+    awful.button({  }, 3, function() mainmenu():toggle() end),
     awful.button({ }, 4, awful.tag.viewnext),
     awful.button({ }, 5, awful.tag.viewprev)
 )
@@ -262,19 +264,25 @@ keys.globalkeys = gears.table.join(
     ),
     awful.key({ }, "XF86AudioRaiseVolume",
         function()
-            awful.spawn.with_shell("exec amixer -D pulse sset Master 2%+")
+            awful.spawn.easy_async_with_shell("exec amixer -D pulse sset Master 2%+", function()
+                volume_widget.refresh_value()
+            end)
         end,
         { description = "Increase volume by 2%", group = "audio" }
     ),
     awful.key({ }, "XF86AudioLowerVolume",
         function()
-            awful.spawn.with_shell("exec amixer -D pulse sset Master 2%-")
+            awful.spawn.easy_async_with_shell("exec amixer -D pulse sset Master 2%-", function ()
+                volume_widget.refresh_value()
+            end)
         end,
         { description = "Decrease volume by 2%", group = "audio" }
     ),
     awful.key({ }, "XF86AudioMute",
         function()
-            awful.spawn.with_shell("exec amixer sset Master toggle")
+            awful.spawn.easy_async_with_shell("exec amixer sset Master toggle", function ()
+                volume_widget.refresh_value()
+            end)
         end,
         { description = "Toggle mute", group = "audio" }
     ),

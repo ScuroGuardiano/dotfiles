@@ -55,6 +55,17 @@ utils.spawn_in_tagidx_and_view = function(command, tagIdx, screen)
     t:view_only()
 end
 
+utils.set_wallpaper = function(s)
+-- Wallpaper
+    if beautiful.wallpaper then
+        local wallpaper = beautiful.wallpaper
+        -- If wallpaper is a function, call it with the screen
+        if type(wallpaper) == "function" then
+            wallpaper = wallpaper(s)
+        end
+        gears.wallpaper.maximized(wallpaper, s, true)
+    end
+end
 
 utils.trim = function (s)
     return (s:gsub("^%s*(.-)%s*$", "%1"))
