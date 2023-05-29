@@ -318,6 +318,19 @@ awful.rules.rules = {
         properties = {
             size_hints_honor = false
         }
+    },
+    {
+        rule_any = {
+            class = {
+                "awakened-poe-trade"
+            }
+        },
+        properties = {
+            border_width = 0,
+            titlebars_enabled = false,
+            focus = false,
+            ontop = true
+        }
     }
 
     -- {   -- Steam is special needs kid aswell
@@ -358,14 +371,10 @@ client.connect_signal("manage", function (c)
     -- if not awesome.startup then awful.client.setslave(c) end
 
     if c.class == "awakened-poe-trade" then
-        -- local poe = function (c)
-        --     return awful.rules.match(c, {class = "steam_app_238960"})
-        -- end
-
-        -- for c in awful.client.iterate(poe) do
-        --   client.focus = c
-        -- end
-        client.focus = c
+        gears.timer.delayed_call(function()
+            c.border_width = 0
+            c.ontop = true
+        end)
     end
 
     if awesome.startup
@@ -422,16 +431,20 @@ end)
 
 --Enable sloppy focus, so that focus follows mouse.
 client.connect_signal("mouse::enter", function(c)
-    if c.class == "awakened-poe-trade" then
-        return
-    end
+    -- if c.class == "awakened-poe-trade" then
+    --     return
+    -- end
 
     c:emit_signal("request::activate", "mouse_enter", {raise = false})
 end)
 
 
-client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
+client.connect_signal("focus", function(c)
+    -- naughty.notify { text = string.format("%s : %s, %s", c.class, tostring(c.ontop), tostring(c.hidded)) }
+    c.border_color = beautiful.border_focus
+end)
 client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
+
 client.connect_signal("property::fullscreen", function(c)
     if c.fullscreen then
         libsg.titlebar.hide(c, { resize = true })
@@ -444,6 +457,12 @@ client.connect_signal("property::fullscreen", function(c)
         libsg.titlebar.show(c, { resize = true })
     end
   end)
+
+client.connect_signal("property::ontop", function(c)
+    if c.class == "awakened-poe-trade" and not c.ontop then
+        gears.timer.delayed_call(function() c.ontop = true end)
+    end
+end)
 
 client.connect_signal("property::request_no_titlebar", function(c)
     if c.request_no_titlebar then
