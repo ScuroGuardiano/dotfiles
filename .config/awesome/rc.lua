@@ -372,7 +372,6 @@ client.connect_signal("manage", function (c)
 
     if c.class == "awakened-poe-trade" then
         gears.timer.delayed_call(function()
-            c.border_width = 0
             c.ontop = true
         end)
     end
@@ -431,9 +430,9 @@ end)
 
 --Enable sloppy focus, so that focus follows mouse.
 client.connect_signal("mouse::enter", function(c)
-    -- if c.class == "awakened-poe-trade" then
-    --     return
-    -- end
+    if c.class == "awakened-poe-trade" then
+        return
+    end
 
     c:emit_signal("request::activate", "mouse_enter", {raise = false})
 end)
