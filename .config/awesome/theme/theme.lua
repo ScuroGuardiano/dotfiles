@@ -11,11 +11,14 @@ local dpi = xresources.apply_dpi
 
 local gfs = require("gears.filesystem")
 local themes_path = gfs.get_themes_dir()
+local moonlight = require("theme.moonlight")
 
 local theme = {}
 
 theme.font          = "BigBlueTermPlus Nerd Font 12"
 theme.titlebar_font = "BigBlueTermPlus Nerd Font 10"
+
+theme.moonlight = moonlight
 
 theme.bg_normal     = "#222222"
 theme.bg_focus      = "#535d6c"

@@ -63,19 +63,25 @@ local function format_value(val)
     return val
 end
 
-local volume_widget = function ()
+--- @param args { color: string? }?
+local volume_widget = function (self, args)
+    local args = args or {}
+    local color = args.color or beautiful.fg_normal
+
     if volume ~= nil then
         return volume
     end
 
+    local volume_format = string.format("<span foreground='%s'>%%s %%s</span>", color)
+
     volume = wibox.widget {
-        markup = icons.unknown,
+        markup = string.format(volume_format, icons.unknown, "???%"),
         align = "center",
         valign = "center",
         widget = wibox.widget.textbox,
         set_value = function(self, val)
             local icon = get_icon(val)
-            self.markup = string.format("%s %s", icon, format_value(val))
+            self.markup = string.format(volume_format, icon, format_value(val))
         end
     }
 

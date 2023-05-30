@@ -202,7 +202,7 @@ keys.globalkeys = gears.table.join(
 
     -- Prompt
     wm("r",
-        function () awful.screen.focused().mypromptbox:run() end,
+        function () awful.screen.focused().mywibox.mypromptbox:run() end,
         { description = "run prompt", group = "launcher" }
     ),
 
